@@ -1,8 +1,9 @@
 package errors
 
 import (
+	"github.com/Kviky/errors/models"
+
 	"encoding/json"
-	"kviky-api/models"
 	"net/http"
 	"reflect"
 	"strings"
