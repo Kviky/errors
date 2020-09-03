@@ -1,0 +1,1 @@
+Kviky package used together with [go-swagger](https://github.com/go-swagger/go-swagger) to produce standardized set of errors in ProblemDetails [https://tools.ietf.org/html/rfc7807](https://tools.ietf.org/html/rfc7807) format. 
