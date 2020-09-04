@@ -1,6 +1,10 @@
 package errors
 
 import (
+	"fmt"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/Kviky/errors/models"
 
 	"encoding/json"
@@ -45,6 +49,7 @@ const (
 
 // List of 400 errors
 const (
+	BadRequest = "Bad request!"
 	CharterHasListings = "Charter cannot be deleted!"
 	CharterNotCreated = "Charter not created!"
 	InvalidMsgFormat = "Invalid message format!"
@@ -104,6 +109,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 	switch errorName{
 
 	// 400 ERRORS
+	case BadRequest:
+		problem.Detail = "There was a problem with the request!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = instClient
 	case CharterHasListings:
 		problem.Detail = "Charter cannot be deleted, because it still has some active listings!"
 		problem.Status = 400
@@ -284,7 +294,9 @@ func writeResponse(problem *models.ProblemDetails, rw http.ResponseWriter) {
 	_, _ = rw.Write(data)
 }
 
-func unknownError(rw http.ResponseWriter, r *http.Request) {
+func unknownError(rw http.ResponseWriter, r *http.Request, err error) {
+
+	log.WithField("util", "errors").Errorf("Unknown error: %v", err.Error())
 
 	problem := CreateProblemDetails(SystemFailure)
 	problem.Type = 	r.RequestURI
@@ -444,6 +456,14 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 	// Default error handler
 	case errors.Error:
 
+		if e.Code() == 400 {
+			badRequestProblem := CreateProblemDetails(BadRequest)
+			badRequestProblem.Detail = fmt.Sprintf("%v %v", badRequestProblem.Detail, e.Error())
+			badRequestProblem.Type = r.RequestURI
+			writeResponse(badRequestProblem, rw)
+			return
+		}
+
 		if e.Code() == 401 {
 			notAuthorizedProblem := CreateProblemDetails(UnauthorizedAccess)
 			notAuthorizedProblem.Type = r.RequestURI
@@ -462,14 +482,14 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 		value := reflect.ValueOf(e)
 		//log.Printf("error value: %v, error code: %v", value, e.Code())
 		if value.Kind() == reflect.Ptr && value.IsNil() {
-			unknownError(rw, r)
+			unknownError(rw, r, err)
 			return
 		}
-		unknownError(rw, r)
+		unknownError(rw, r, err)
 
 	case nil:
-		unknownError(rw, r)
+		unknownError(rw, r, err)
 	default:
-		unknownError(rw, r)
+		unknownError(rw, r, err)
 	}
 }
