@@ -113,7 +113,7 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Detail = "There was a problem with the request!"
 		problem.Status = 400
 		problem.Code = badRequest
-		problem.Instance = instClient
+		problem.Instance = InstClient
 	case CharterHasListings:
 		problem.Detail = "Charter cannot be deleted, because it still has some active listings!"
 		problem.Status = 400
