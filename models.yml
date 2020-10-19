@@ -1,0 +1,41 @@
+definitions:
+  ProblemDetails:
+    title: ProblemDetails
+    type: object
+    properties:
+      type:
+        description: URI of the resource
+        type: string
+      title:
+        description: Human readable title of error
+        type: string
+      status:
+        description: HTTP status code
+        type: integer
+        format: int32
+      detail:
+        description: Human readable description/detail of error
+        type: string
+      instance:
+        description: Instance where error occured
+        type: string
+      code:
+        description: Human readable HTTP code explanation
+        type: string
+      invalidParams:
+        x-omitempty: true
+        type: array
+        items:
+          $ref: '#/definitions/InvalidParam'
+        minItems: 1
+
+  InvalidParam:
+    title: InvalidParam
+    type: object
+    properties:
+      param:
+        type: string
+      reason:
+        type: string
+    required:
+      - param
