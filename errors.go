@@ -1,16 +1,15 @@
 package errors
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"reflect"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Kviky/errors/models"
-
-	"encoding/json"
-	"net/http"
-	"reflect"
-	"strings"
 
 	"github.com/go-openapi/errors"
 )
@@ -21,72 +20,77 @@ const (
 
 // Types of instances
 const (
-	InstApp = "app"
-	InstApi = "api"
+	InstApp      = "app"
+	InstImage    = "image"
+	InstApi      = "api"
 	InstIdentity = "identity"
-	InstClient = "client"
-	InstDB = "database"
+	InstClient   = "client"
+	InstDB       = "database"
 )
 
 // List of error codes
 const (
-	unauthorized         = "Unauthorized"
-	temporaryRedirect    = "Temporary Redirect"
-	permanentRedirect    = "Permanent Redirect"
-	badRequest           = "Bad Request"
-	notImplemented       = "Not Implemented"
-	forbidden            = "Forbidden"
-	notFound             = "Not Found"
-	gone                 = "Gone"
-	preconditionFailed   = "Precondition Failed"
-	unprocessableEntry   = "Unprocessable Entity"
-	lengthRequired       = "Length Required"
-	tooManyRequests      = "Too Many Requests"
-	internalServerError  = "Internal Server Error"
-	serviceUnavailable   = "Service Unavailable"
-	methodNotAllowed     = "Method Not Allowed"
+	unauthorized        = "Unauthorized"
+	temporaryRedirect   = "Temporary Redirect"
+	permanentRedirect   = "Permanent Redirect"
+	badRequest          = "Bad Request"
+	notImplemented      = "Not Implemented"
+	forbidden           = "Forbidden"
+	notFound            = "Not Found"
+	gone                = "Gone"
+	preconditionFailed  = "Precondition Failed"
+	unprocessableEntry  = "Unprocessable Entity"
+	lengthRequired      = "Length Required"
+	tooManyRequests     = "Too Many Requests"
+	internalServerError = "Internal Server Error"
+	serviceUnavailable  = "Service Unavailable"
+	methodNotAllowed    = "Method Not Allowed"
 )
 
 // List of 400 errors
 const (
-	BadRequest = "Bad request!"
-	CharterHasListings = "Charter cannot be deleted!"
-	CharterNotCreated = "Charter not created!"
-	InvalidMsgFormat = "Invalid message format!"
-	InvalidBodyParam = "Invalid body parameter!"
-	InvalidHeaderParam = "Invalid header parameter!"
-	InvalidQueryParam = "Invalid query parameter!"
-	InvalidPathParam = "Invalid path parameter!"
-	ListingNotCreated = "Listing not created!"
-	LocationNotCreated = "Location not created!"
+	AlreadyExists           = "Already exists!"
+	ImageNotDeleted         = "Image cannot be deleted!"
+	ImageNotUploaded        = "Image cannot be uploaded!"
+	BadRequest              = "Bad request!"
+	CharterHasListings      = "Charter cannot be deleted!"
+	CharterNotCreated       = "Charter not created!"
+	InvalidMsgFormat        = "Invalid message format!"
+	InvalidBodyParam        = "Invalid body parameter!"
+	InvalidHeaderParam      = "Invalid header parameter!"
+	InvalidQueryParam       = "Invalid query parameter!"
+	InvalidPathParam        = "Invalid path parameter!"
+	ListingNotCreated       = "Listing not created!"
+	LocationNotCreated      = "Location not created!"
 	MandatoryParamIncorrect = "Mandatory parameter incorrect!"
-	MandatoryParamMissing = "Mandatory parameter missing!"
-	NameAlreadyTaken = "Name is already taken!"
-	PortAlreadyExists = "Port name exists already!"
-	ReservationNotCreated = "Reservation not created!"
+	MandatoryParamMissing   = "Mandatory parameter missing!"
+	NameAlreadyTaken        = "Name is already taken!"
+	PortAlreadyExists       = "Port name exists already!"
+	ReservationNotCreated   = "Reservation not created!"
 )
 
 // List of 401 errors
 const (
-	InvalidAuthToken = "Invalid authorization token!"
-	MissingAuthToken = "Missing authorization token!"
+	InvalidAuthToken   = "Invalid authorization token!"
+	MissingAuthToken   = "Missing authorization token!"
 	UnauthorizedAccess = "Unauthorized access!"
 )
 
 // List of 403 errors
 const (
-	ForbiddenAction = "Forbidden action!"
+	ForbiddenAction   = "Forbidden action!"
 	ForbiddenResource = "Forbidden resource!"
+	ForbiddenUpload   = "Forbidden upload!"
 )
 
 // list of 404 errors
 const (
-	CharterNotFound = "Charter not found!"
-	ListingNotFound = "Listing not found!"
+	CharterNotFound  = "Charter not found!"
+	ListingNotFound  = "Listing not found!"
 	LocationNotFound = "Location not found!"
 	ResourceNotFound = "Resource not found!"
-	UserNotFound = "User not found!"
-	UsersNotFound = "Users not found!"
+	UserNotFound     = "User not found!"
+	UsersNotFound    = "Users not found!"
 )
 
 // list of 405 errors
@@ -96,8 +100,8 @@ const (
 
 // List of 500 errors
 const (
-	SystemFailure = "System failure!"
-	UnspecifiedFailure   = "Unspecified failure!"
+	SystemFailure      = "System failure!"
+	UnspecifiedFailure = "Unspecified failure!"
 )
 
 // CreateProblemDetails - Helper function to create ProblemDetails object
@@ -106,9 +110,14 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 	problem.Title = errorName
 	problem.Type = "/"
 
-	switch errorName{
+	switch errorName {
 
 	// 400 ERRORS
+	case AlreadyExists:
+		problem.Detail = "The requested resource already exists!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
 	case BadRequest:
 		problem.Detail = "There was a problem with the request!"
 		problem.Status = 400
@@ -134,6 +143,16 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
+	case ImageNotDeleted:
+		problem.Detail = "There was a problem to delete image!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstImage
+	case ImageNotUploaded:
+		problem.Detail = "There was a problem to upload image!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstImage
 	case InvalidQueryParam:
 		problem.Detail = "The HTTP request contains an unsupported query parameter in the URI!"
 		problem.Status = 400
@@ -213,6 +232,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 403
 		problem.Code = forbidden
 		problem.Instance = InstClient
+	case ForbiddenUpload:
+		problem.Detail = "This accound doesn't have permission to upload images!"
+		problem.Status = 403
+		problem.Code = forbidden
+		problem.Instance = InstClient
 
 	// 404 ERRORS
 	case CharterNotFound:
@@ -272,6 +296,20 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 	return problem
 }
 
+func NewImageSizeError(size int64) *models.InvalidParam {
+	name := "size"
+	return &models.InvalidParam{
+		Param:  &name,
+		Reason: fmt.Sprintf("Maximum file size is %dMB", size),
+	}
+}
+
+func NewImageSizePxError(name string, px int) *models.InvalidParam {
+	return &models.InvalidParam{
+		Param:  &name,
+		Reason: fmt.Sprintf("Maximum %s is %dpx", name, px),
+	}
+}
 
 func NewMissingParam(name string) *models.InvalidParam {
 	return &models.InvalidParam{
@@ -299,7 +337,7 @@ func unknownError(rw http.ResponseWriter, r *http.Request, err error) {
 	log.WithField("util", "errors").Errorf("Unknown error: %v", err.Error())
 
 	problem := CreateProblemDetails(SystemFailure)
-	problem.Type = 	r.RequestURI
+	problem.Type = r.RequestURI
 	writeResponse(problem, rw)
 }
 
@@ -334,7 +372,7 @@ func errorAsJSON(err errors.Error) []byte {
 // ServeError the error handler interface implementation
 func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 	rw.Header().Set("Content-Type", "application/json")
-	
+
 	bodyProblem := CreateProblemDetails(InvalidBodyParam)
 	bodyProblem.Type = r.RequestURI
 
@@ -352,24 +390,24 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 
 	problem := CreateProblemDetails(InvalidMsgFormat)
 	problem.Type = r.RequestURI
-	
+
 	switch e := err.(type) {
 	case *errors.CompositeError:
 		// er := flattenComposite(e)
 		// log.Printf("er: %v", er.Errors)
 
-		for _, errItem := range e.Errors{
-			switch valErr := errItem.(type){
+		for _, errItem := range e.Errors {
+			switch valErr := errItem.(type) {
 			case *errors.Validation:
 				invalidParam := &models.InvalidParam{
 					Param:  &valErr.Name,
 					Reason: valErr.Error(),
 				}
-				switch valErr.In{
+				switch valErr.In {
 				case "body":
 					// log.Printf("request body issue: %+v", valErr)
 					// log.Printf("valErr.code(): %v", valErr.Code())
-					if valErr.Name == "body"{
+					if valErr.Name == "body" {
 						problem.InvalidParams = append(problem.InvalidParams, invalidParam)
 					} else {
 						// Filter custom openapi errors
@@ -399,9 +437,9 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 					Param:  &valErr.Name,
 					Reason: valErr.Error(),
 				}
-				switch valErr.In{
+				switch valErr.In {
 				case "body":
-					if valErr.Name == "body"{
+					if valErr.Name == "body" {
 						problem.InvalidParams = append(problem.InvalidParams, invalidParam)
 					} else {
 						// Filter custom openapi errors
@@ -440,7 +478,7 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 			writeResponse(headerProblem, rw)
 		} else if len(problem.InvalidParams) > 0 {
 			writeResponse(problem, rw)
-		}else {
+		} else {
 			ServeError(rw, r, nil)
 		}
 
@@ -474,7 +512,7 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 		if e.Code() == 404 {
 			notFoundProblem := CreateProblemDetails(ResourceNotFound)
 			notFoundProblem.Type = r.RequestURI
-			notFoundProblem.Detail = notFoundProblem.Detail + " " + e.Error() 
+			notFoundProblem.Detail = notFoundProblem.Detail + " " + e.Error()
 			writeResponse(notFoundProblem, rw)
 			return
 		}
