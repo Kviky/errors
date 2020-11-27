@@ -57,6 +57,7 @@ const (
 	CharterNotCreated       = "Charter not created!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
+	InvalidDates            = "Invalid dates!"
 	InvalidHeaderParam      = "Invalid header parameter!"
 	InvalidQueryParam       = "Invalid query parameter!"
 	InvalidPathParam        = "Invalid path parameter!"
@@ -138,8 +139,18 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
+	case InvalidDates:
+		problem.Detail = "The requested dates are invalid!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
 	case InvalidHeaderParam:
 		problem.Detail = "The HTTP request contains an unsupported header parameter!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case InvalidMsgFormat:
+		problem.Detail = "The HTTP request has an invalid format!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
@@ -180,11 +191,6 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case MandatoryParamMissing:
 		problem.Detail = "Parameter which is defined as mandatory is missing!"
-		problem.Status = 400
-		problem.Code = badRequest
-		problem.Instance = InstClient
-	case InvalidMsgFormat:
-		problem.Detail = "The HTTP request has an invalid format!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
