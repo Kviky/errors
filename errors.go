@@ -55,7 +55,7 @@ const (
 	BadRequest              = "Bad request!"
 	CharterHasListings      = "Charter cannot be deleted!"
 	CharterNotCreated       = "Charter not created!"
-	InactiveListing         = "InactiveListing!"
+	InactiveListing         = "Inactive Listing!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
 	InvalidDates            = "Invalid dates!"
