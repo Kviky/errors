@@ -168,13 +168,13 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstImage
 	case InactiveListing:
 		// listingid should be added manually
-		problem.Detail = "Listing %s is not in the active state!"
+		problem.Detail = "Listing %v is not in the active state!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
 	case InvalidOwnerListing:
 		// listingid should be added manually
-		problem.Detail = "Charter doesn't own the listing %s!"
+		problem.Detail = "Charter doesn't own the listing %v!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
