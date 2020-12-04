@@ -11,6 +11,7 @@ vscode:<br />
 git:<br />
     1) commit all changes<br />
     2) exec cmd in the terminal or shell `git tag -a v1.4 -m 'my version 1.4'`<br />
+    3) git push origin --tags
 
 github:<br />
     1) choose Code tab<br />
