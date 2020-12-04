@@ -55,10 +55,12 @@ const (
 	BadRequest              = "Bad request!"
 	CharterHasListings      = "Charter cannot be deleted!"
 	CharterNotCreated       = "Charter not created!"
+	InactiveListing         = "Inactive Listing!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
 	InvalidDates            = "Invalid dates!"
 	InvalidHeaderParam      = "Invalid header parameter!"
+	InvalidOwnerListing     = "Invalid owner listing!"
 	InvalidQueryParam       = "Invalid query parameter!"
 	InvalidPathParam        = "Invalid path parameter!"
 	ListingNotCreated       = "Listing not created!"
@@ -164,6 +166,18 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstImage
+	case InactiveListing:
+		// listingid should be added manually
+		problem.Detail = "Listing %v is not in the active state!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case InvalidOwnerListing:
+		// listingid should be added manually
+		problem.Detail = "Charter doesn't own the listing %v!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
 	case InvalidQueryParam:
 		problem.Detail = "The HTTP request contains an unsupported query parameter in the URI!"
 		problem.Status = 400
