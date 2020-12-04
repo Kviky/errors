@@ -1,1 +1,20 @@
 Kviky package used together with [go-swagger](https://github.com/go-swagger/go-swagger) to produce standardized set of errors in ProblemDetails [https://tools.ietf.org/html/rfc7807](https://tools.ietf.org/html/rfc7807) format. 
+
+Creating tags:
+
+vscode:<br />
+    1) choose source control on activity bar<br />
+    2) commit all changes that were done<br />
+    3) choose tab tags and press the plus button<br />
+    4) when the tag is created, run command pallete and choose 'Git: Push (Follow Tags)'<br />
+    
+git:<br />
+    1) commit all changes<br />
+    2) exec cmd in the terminal or shell `git tag -a v1.4 -m 'my version 1.4'`<br />
+
+github:<br />
+    1) choose Code tab<br />
+    2) on the right side choose Releases<br />
+    3) choose Draft new release<br />
+    4) follow the instruction<br />
+
