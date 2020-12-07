@@ -50,6 +50,7 @@ const (
 // List of 400 errors
 const (
 	AlreadyExists           = "Already exists!"
+	OffersEnded             = "Offers ended today!"
 	ImageNotDeleted         = "Image cannot be deleted!"
 	ImageNotUploaded        = "Image cannot be uploaded!"
 	BadRequest              = "Bad request!"
@@ -210,6 +211,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case NameAlreadyTaken:
 		problem.Detail = "Requested name is already taken! Please, specify another name."
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case OffersEnded:
+		problem.Detail = "Available number of the offers ended for today!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
