@@ -92,6 +92,7 @@ const (
 	CharterNotFound  = "Charter not found!"
 	ListingNotFound  = "Listing not found!"
 	LocationNotFound = "Location not found!"
+	ReservationNotFound = "Reservation not found!"
 	ResourceNotFound = "Resource not found!"
 	UserNotFound     = "User not found!"
 	UsersNotFound    = "Users not found!"
@@ -277,6 +278,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case LocationNotFound:
 		problem.Detail = "The location indicated in the request does not exist!"
+		problem.Status = 404
+		problem.Code = notFound
+		problem.Instance = InstClient
+	case ReservationNotFound:
+		problem.Detail = "Requested reservation does not exist!"
 		problem.Status = 404
 		problem.Code = notFound
 		problem.Instance = InstClient
