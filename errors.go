@@ -50,18 +50,15 @@ const (
 // List of 400 errors
 const (
 	AlreadyExists           = "Already exists!"
-	OffersEnded             = "Offers ended today!"
 	ImageNotDeleted         = "Image cannot be deleted!"
 	ImageNotUploaded        = "Image cannot be uploaded!"
 	BadRequest              = "Bad request!"
 	CharterHasListings      = "Charter cannot be deleted!"
 	CharterNotCreated       = "Charter not created!"
-	InactiveListing         = "Inactive Listing!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
 	InvalidDates            = "Invalid dates!"
 	InvalidHeaderParam      = "Invalid header parameter!"
-	InvalidOwnerListing     = "Invalid owner listing!"
 	InvalidQueryParam       = "Invalid query parameter!"
 	InvalidPathParam        = "Invalid path parameter!"
 	ListingNotCreated       = "Listing not created!"
@@ -92,6 +89,7 @@ const (
 	CharterNotFound  = "Charter not found!"
 	ListingNotFound  = "Listing not found!"
 	LocationNotFound = "Location not found!"
+	ReservationNotFound = "Reservation not found!"
 	ResourceNotFound = "Resource not found!"
 	UserNotFound     = "User not found!"
 	UsersNotFound    = "Users not found!"
@@ -167,18 +165,6 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstImage
-	case InactiveListing:
-		// listingid should be added manually
-		problem.Detail = "Listing %v is not in the active state!"
-		problem.Status = 400
-		problem.Code = badRequest
-		problem.Instance = InstClient
-	case InvalidOwnerListing:
-		// listingid should be added manually
-		problem.Detail = "Charter doesn't own the listing %v!"
-		problem.Status = 400
-		problem.Code = badRequest
-		problem.Instance = InstClient
 	case InvalidQueryParam:
 		problem.Detail = "The HTTP request contains an unsupported query parameter in the URI!"
 		problem.Status = 400
@@ -211,11 +197,6 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case NameAlreadyTaken:
 		problem.Detail = "Requested name is already taken! Please, specify another name."
-		problem.Status = 400
-		problem.Code = badRequest
-		problem.Instance = InstClient
-	case OffersEnded:
-		problem.Detail = "Available number of the offers ended for today!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
@@ -277,6 +258,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case LocationNotFound:
 		problem.Detail = "The location indicated in the request does not exist!"
+		problem.Status = 404
+		problem.Code = notFound
+		problem.Instance = InstClient
+	case ReservationNotFound:
+		problem.Detail = "Requested reservation does not exist!"
 		problem.Status = 404
 		problem.Code = notFound
 		problem.Instance = InstClient
