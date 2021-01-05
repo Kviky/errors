@@ -56,6 +56,7 @@ const (
 	BadRequest              = "Bad request!"
 	CharterHasListings      = "Charter cannot be deleted!"
 	CharterNotCreated       = "Charter not created!"
+	FileExistsAlready       = "File exists already!"
 	InactiveListing         = "Inactive Listing!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
@@ -89,13 +90,13 @@ const (
 
 // list of 404 errors
 const (
-	CharterNotFound  = "Charter not found!"
-	ListingNotFound  = "Listing not found!"
-	LocationNotFound = "Location not found!"
+	CharterNotFound     = "Charter not found!"
+	ListingNotFound     = "Listing not found!"
+	LocationNotFound    = "Location not found!"
 	ReservationNotFound = "Reservation not found!"
-	ResourceNotFound = "Resource not found!"
-	UserNotFound     = "User not found!"
-	UsersNotFound    = "Users not found!"
+	ResourceNotFound    = "Resource not found!"
+	UserNotFound        = "User not found!"
+	UsersNotFound       = "Users not found!"
 )
 
 // list of 405 errors
@@ -135,6 +136,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case CharterNotCreated:
 		problem.Detail = "There was a problem to create charter profile!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case FileExistsAlready:
+		problem.Detail = "File with same name exists already! Please, specify another name."
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
