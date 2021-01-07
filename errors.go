@@ -45,6 +45,7 @@ const (
 	internalServerError = "Internal Server Error"
 	serviceUnavailable  = "Service Unavailable"
 	methodNotAllowed    = "Method Not Allowed"
+	gatewayTimeout      = "Gateway Timeout"
 )
 
 // List of 400 errors
@@ -104,10 +105,25 @@ const (
 	MethodNotAllowed = "Method not allowed!"
 )
 
+// list of 429 errors
+const (
+	CongestionRisk = "Too many requests!"
+)
+
 // List of 500 errors
 const (
 	SystemFailure      = "System failure!"
 	UnspecifiedFailure = "Unspecified failure!"
+)
+
+// List of 503 errors
+const (
+	ServiceUnavailable = "Service Unavailable!"
+)
+
+// List of 504 errors
+const (
+	GatewayTimeout = "Gateway Timeout!"
 )
 
 // CreateProblemDetails - Helper function to create ProblemDetails object
@@ -315,11 +331,32 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Code = methodNotAllowed
 		problem.Instance = InstClient
 
+	// 429 ERRORS
+	case CongestionRisk:
+		problem.Detail = "The request is rejected due to excessive traffic. If continued over time, may lead to an overload situation."
+		problem.Status = 429
+		problem.Code = tooManyRequests
+		problem.Instance = InstClient
+
 	// 500 ERRORS
 	case UnspecifiedFailure:
 		problem.Detail = "The request is rejected due to unspecified reason at the system!"
 		problem.Status = 500
 		problem.Code = internalServerError
+		problem.Instance = InstApi
+
+	//503 ERRORS
+	case ServiceUnavailable:
+		problem.Detail = "The service experiences congestion and performs overload control. It does not allow the request to be processed."
+		problem.Status = 503
+		problem.Code = serviceUnavailable
+		problem.Instance = InstApi
+
+	// 504 ERRORS
+	case GatewayTimeout:
+		problem.Detail = "The request is rejected due a request that has timed out at the HTTP client."
+		problem.Status = 504
+		problem.Code = gatewayTimeout
 		problem.Instance = InstApi
 
 	// DEFUALT ERROR 500
