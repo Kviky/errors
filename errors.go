@@ -457,6 +457,9 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 	queryProblem := CreateProblemDetails(InvalidQueryParam)
 	queryProblem.Type = r.RequestURI
 
+	queryMissingProblem := CreateProblemDetails(MandatoryParamMissing)
+	queryMissingProblem.Type = r.RequestURI
+
 	pathProblem := CreateProblemDetails(InvalidPathParam)
 	pathProblem.Type = r.RequestURI
 
@@ -495,7 +498,11 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 					}
 
 				case "query":
-					queryProblem.InvalidParams = append(queryProblem.InvalidParams, invalidParam)
+					if valErr.Code() == 602 {
+						queryMissingProblem.InvalidParams = append(queryMissingProblem.InvalidParams, invalidParam)
+					} else {
+						queryProblem.InvalidParams = append(queryProblem.InvalidParams, invalidParam)
+					}
 
 				case "path":
 					pathProblem.InvalidParams = append(pathProblem.InvalidParams, invalidParam)
@@ -547,6 +554,8 @@ func ServeError(rw http.ResponseWriter, r *http.Request, err error) {
 			writeResponse(bodyMissingProblem, rw)
 		} else if len(queryProblem.InvalidParams) > 0 {
 			writeResponse(queryProblem, rw)
+		} else if len(queryMissingProblem.InvalidParams) > 0 {
+			writeResponse(queryMissingProblem, rw)
 		} else if len(pathProblem.InvalidParams) > 0 {
 			writeResponse(pathProblem, rw)
 		} else if len(headerProblem.InvalidParams) > 0 {
