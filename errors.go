@@ -52,6 +52,7 @@ const (
 const (
 	AlreadyExists           = "Already exists!"
 	OffersEnded             = "Offers ended today!"
+	ImageInvalid            = "File is not a valid image!"
 	ImageNotDeleted         = "Image cannot be deleted!"
 	ImageNotUploaded        = "Image cannot be uploaded!"
 	BadRequest              = "Bad request!"
@@ -177,6 +178,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case InvalidMsgFormat:
 		problem.Detail = "The HTTP request has an invalid format!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case ImageInvalid:
+		problem.Detail = "File must be a valid image - image/jpeg, image/jpg, image/png!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
