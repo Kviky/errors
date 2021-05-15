@@ -52,6 +52,7 @@ const (
 const (
 	AlreadyExists           = "Already exists!"
 	OffersEnded             = "Offers ended today!"
+	OffersMaxListings       = "Maximum listings reached!"
 	ImageInvalid            = "File is not a valid image!"
 	ImageNotDeleted         = "Image cannot be deleted!"
 	ImageNotUploaded        = "Image cannot be uploaded!"
@@ -245,6 +246,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case OffersEnded:
 		problem.Detail = "Available number of the offers ended for today!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case OffersMaxListings:
+		problem.Detail = "Maximum limit of %v listings is reached. Please, reduce number of listings in offer!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
