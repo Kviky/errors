@@ -73,6 +73,7 @@ const (
 	MandatoryParamIncorrect = "Mandatory parameter incorrect!"
 	MandatoryParamMissing   = "Mandatory parameter missing!"
 	NameAlreadyTaken        = "Name is already taken!"
+	OfferNotCreated         = "Offer not created!"
 	PortAlreadyExists       = "Port name exists already!"
 	ReservationNotCreated   = "Reservation not created!"
 )
@@ -251,6 +252,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Instance = InstClient
 	case OffersMaxListings:
 		problem.Detail = "Maximum limit of %v listings is reached. Please, reduce number of listings in offer!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstClient
+	case OfferNotCreated:
+		problem.Detail = "There was a problem to create offer!"
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
