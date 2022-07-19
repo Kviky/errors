@@ -21,6 +21,7 @@ const (
 // Types of instances
 const (
 	InstApp      = "app"
+	InstExport   = "export"
 	InstImage    = "image"
 	InstApi      = "api"
 	InstIdentity = "identity"
@@ -60,6 +61,7 @@ const (
 	CharterHasListings      = "Charter cannot be deleted!"
 	CharterNotCreated       = "Charter not created!"
 	FileExistsAlready       = "File exists already!"
+	FileNotCreated          = "File not created!"
 	InactiveListing         = "Inactive Listing!"
 	InvalidMsgFormat        = "Invalid message format!"
 	InvalidBodyParam        = "Invalid body parameter!"
@@ -162,6 +164,11 @@ func CreateProblemDetails(errorName string) *models.ProblemDetails {
 		problem.Status = 400
 		problem.Code = badRequest
 		problem.Instance = InstClient
+	case FileNotCreated:
+		problem.Detail = "There was a problem to create file!"
+		problem.Status = 400
+		problem.Code = badRequest
+		problem.Instance = InstExport
 	case InvalidBodyParam:
 		problem.Detail = "The HTTP request contains an unsupported body parameter!"
 		problem.Status = 400
